@@ -2,7 +2,6 @@ import pygame
 import os
 import random
 
-from scipy import rand
 from store.enemies.Enemy import Enemy
 from store.ships.Ship import Ship
 from store.players.PlayerAssault import PlayerAssault
@@ -34,7 +33,7 @@ MUSIC_PATHS_MENU = ["assets/music/8-bit-adventure.mp3",
                     "assets/music/Sawtines.mp3", "assets/music/Night Shade.mp3", "assets/music/Space Raptors.mp3", "assets/music/Aurora Borealis.mp3"]
 
 MUSIC_PATHS_GAME = ["assets/music/Shapes.mp3",
-                    "assets/music/Unfound.mp3", "assets/music/Low Earth Orbit.mp3", "assets/music/Aurora Borealis.mp3"]
+                    "assets/music/Unfound.mp3", "assets/music/Low Earth Orbit.mp3", "assets/music/Aurora Borealis.mp3", "assets/music/Liminal.mp3"]
 
 
 def menuMusicPlayer():
@@ -148,6 +147,7 @@ def game(player):
     wave_length = 4
     enemy_vel = 1
     laser_vel = 5
+    farthests_spawn_distance = -1800
     number_of_healthpots = 4
 
     def redraw_game_window():
@@ -201,17 +201,18 @@ def game(player):
         if len(health_potions) == 0:
             if random.randrange(0, 5*60) == 1:
                 HealthPot = HealthPotion(random.randrange(50, WIDTH-70),
-                                         random.randrange(-1500, -100))
+                                         random.randrange(-1800, -100))
                 health_potions.append(HealthPot)
 
         if len(enemies) == 0:
             level += 1
             wave_length += 2
+            farthests_spawn_distance -= 45
             if player.health != player.maxHealth:
                 player.health += 25
             for i in range(wave_length):
                 enemy = Enemy(random.randrange(50, WIDTH-70),
-                              random.randrange(-1800, -100), random.choice(["blue", "red", "grey"]))
+                              random.randrange(farthests_spawn_distance, -100), random.choice(["blue", "red", "grey"]))
                 enemies.append(enemy)
 
         for event in pygame.event.get():
