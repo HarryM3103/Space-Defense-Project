@@ -182,7 +182,7 @@ def game(player):
 
     while run:
 
-        if pygame.mixer.music.get_busy() == False:
+        if pygame.mixer.music.get_busy() == False:  # MUSIC PLAYER
             gameMusicPlayer()
 
         clock.tick(FPS)
