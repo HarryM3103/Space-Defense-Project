@@ -30,7 +30,7 @@ GAME_BG = pygame.transform.scale(
 
 
 MUSIC_PATHS_MENU = ["assets/music/8-bit-adventure.mp3",
-                    "assets/music/Sawtines.mp3", "assets/music/Night Shade.mp3", "assets/music/Space Raptors.mp3", "assets/music/Aurora Borealis.mp3"]
+                    "assets/music/Sawtines.mp3", "assets/music/Night Shade.mp3", "assets/music/Space Raptors.mp3", "assets/music/Aurora Borealis.mp3", "assets/music/Derezzed.mp3"]
 
 MUSIC_PATHS_GAME = ["assets/music/Shapes.mp3",
                     "assets/music/Unfound.mp3", "assets/music/Low Earth Orbit.mp3", "assets/music/Aurora Borealis.mp3", "assets/music/Liminal.mp3"]
@@ -128,7 +128,7 @@ def menu():
     pygame.quit()
 
 
-def game(player):
+def game(player: Ship):
 
     gameMusicPlayer()
 
@@ -138,9 +138,8 @@ def game(player):
 
     level = 0
     lives = 5
-    currentHealth = player.health
     MaxHealth = player.maxHealth
-    enemies = []
+    enemies: list[Enemy] = []
     health_potions: list[HealthPotion] = []
     lost = False
     lost_count = 0
