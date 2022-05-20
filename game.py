@@ -50,6 +50,13 @@ def gameMusicPlayer():
     pygame.mixer.music.set_volume(0.10)
 
 
+def gameOverPlayer():
+    song = "assets/music/game over.mp3"
+    pygame.mixer.music.load(song)
+    pygame.mixer.music.play(0)
+    pygame.mixer.music.set_volume(0.25)
+
+
 def get_font(size):  # Returns Press-Start-2P in the desired size
     return pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", size)
 
@@ -149,6 +156,14 @@ def game(player: Ship):
     farthests_spawn_distance = -1800
     number_of_healthpots = 4
 
+    def game_over():
+        lostFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 120)
+        gameOverPlayer()
+        lost_label = lostFont.render(f"GAME OVER...", True, "#FFFFFF")
+        WIN.blit(lost_label, (200, 300))
+        pygame.display.update()
+        pygame.time.delay(10000)
+
     def redraw_game_window():
         pygame.display.set_caption("Space Defense")
 
@@ -172,7 +187,6 @@ def game(player: Ship):
         WIN.blit(playerHealth, (750, 50))
         WIN.blit(playerLives, (750, 90))
 
-        lostFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 120)
         if lost:
             lost_label = lostFont.render(f"GAME OVER...", True, "#FFFFFF")
             WIN.blit(lost_label, (200, 300))
@@ -180,7 +194,6 @@ def game(player: Ship):
         pygame.display.update()
 
     while run:
-
         if pygame.mixer.music.get_busy() == False:  # MUSIC PLAYER
             gameMusicPlayer()
 
@@ -188,14 +201,8 @@ def game(player: Ship):
         redraw_game_window()
 
         if lives <= 0 or player.health <= 0:
-            lost = True
-            lost_count += 1
-
-        if lost:
-            if lost_count > FPS * 5:
-                menu()
-            else:
-                continue
+            game_over()
+            menu()
 
         if len(health_potions) == 0:
             if random.randrange(0, 5*60) == 1:
