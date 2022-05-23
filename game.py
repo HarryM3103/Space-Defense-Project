@@ -10,6 +10,8 @@ from store.players.PlayerHeavy import PlayerHeavy
 from store.button.Button import Button
 from store.lasers.Laser import Laser, collide
 from store.power_ups.HealthPotion import HealthPotion
+from store.power_ups.DestroyEnemies import DestroyEnemies
+pygame.mixer.init()
 
 
 pygame.init()
@@ -132,6 +134,9 @@ def menu():
         for enemy in enemies:
             enemy.move_down(enemy_vel)
 
+            if enemy.y + enemy.get_height() > HEIGHT + 50:
+                enemies.remove(enemy)
+
     pygame.quit()
 
 
@@ -148,6 +153,7 @@ def game(player: Ship):
     MaxHealth = player.maxHealth
     enemies: list[Enemy] = []
     health_potions: list[HealthPotion] = []
+    destroy_powerUp: list[DestroyEnemies] = []
     lost = False
     lost_count = 0
     wave_length = 4

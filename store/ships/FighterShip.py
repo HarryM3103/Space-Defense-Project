@@ -11,7 +11,7 @@ class FighterShip(Ship):
     HEIGHT = 45
     GAME_HEIGHT = 700
 
-    def __init__(self, x: int, y: int, health):
+    def __init__(self, x: int, y: int, health=75):
         super().__init__(x, y, health)
         self.vel = self.VEL
 

@@ -8,7 +8,7 @@ G = pygame.transform.scale(pygame.image.load(
 
 GREEN_LASER = pygame.transform.rotate(G, 90.0)
 
-WIDTH, HEIGHT = (130, 110)
+WIDTH, HEIGHT = (150, 100)
 
 ASSAULT_SHIP = pygame.transform.scale(pygame.image.load(os.path.join(
     "assets", "images", "PlayerAssault.png")), (WIDTH, HEIGHT))
@@ -24,7 +24,7 @@ class PlayerAssault(AssaultShip):
 
     def shoot(self, window):
         if self.cool_down_counter == 0:
-            laser = Laser(self.x + 52.5, self.y, self.laser_img)
+            laser = Laser(self.x + 63.5, self.y, self.laser_img)
             self.lasers.append(laser)
             self.cool_down_counter = 1
 
