@@ -97,7 +97,7 @@ def menu():
 
     while run:
 
-        if pygame.mixer.music.get_busy() == False:
+        if pygame.mixer.music.get_busy() is False:
             menuMusicPlayer()
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
@@ -200,7 +200,7 @@ def game(player: Ship):
         pygame.display.update()
 
     while run:
-        if pygame.mixer.music.get_busy() == False:  # MUSIC PLAYER
+        if pygame.mixer.music.get_busy() is False:  # MUSIC PLAYER
             gameMusicPlayer()
 
         clock.tick(FPS)
