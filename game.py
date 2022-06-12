@@ -11,6 +11,7 @@ from store.button.Button import Button
 from store.lasers.Laser import Laser, collide
 from store.power_ups.HealthPotion import HealthPotion
 from store.power_ups.DestroyEnemies import DestroyEnemies
+from store.musicPlayer.music import MusicPlayer
 pygame.mixer.init()
 
 
@@ -31,34 +32,6 @@ GAME_BG = pygame.transform.scale(
     pygame.image.load(os.path.join("assets", "images", "space.jpeg")), (WIDTH, HEIGHT))
 
 
-MUSIC_PATHS_MENU = ["assets/music/8-bit-adventure.mp3",
-                    "assets/music/Sawtines.mp3", "assets/music/Night Shade.mp3", "assets/music/Space Raptors.mp3", "assets/music/Aurora Borealis.mp3", "assets/music/Derezzed.mp3"]
-
-MUSIC_PATHS_GAME = ["assets/music/Shapes.mp3",
-                    "assets/music/Unfound.mp3", "assets/music/Low Earth Orbit.mp3", "assets/music/Aurora Borealis.mp3", "assets/music/Liminal.mp3"]
-
-
-def menuMusicPlayer():
-    song = random.choice(MUSIC_PATHS_MENU)
-    pygame.mixer.music.load(song)
-    pygame.mixer.music.play(0)
-    pygame.mixer.music.set_volume(0.25)
-
-
-def gameMusicPlayer():
-    song = random.choice(MUSIC_PATHS_GAME)
-    pygame.mixer.music.load(song)
-    pygame.mixer.music.play(0)
-    pygame.mixer.music.set_volume(0.10)
-
-
-def gameOverPlayer():
-    song = "assets/music/game over.mp3"
-    pygame.mixer.music.load(song)
-    pygame.mixer.music.play(0)
-    pygame.mixer.music.set_volume(0.25)
-
-
 def get_font(size):  # Returns Press-Start-2P in the desired size
     return pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", size)
 
@@ -70,7 +43,7 @@ def menu():
     enemy_vel = 1
     clock = pygame.time.Clock()
     run = True
-    menuMusicPlayer()
+    MusicPlayer().menuMusic()
 
     def redraw_start_window():
         pygame.display.set_caption("Menu")
@@ -98,7 +71,7 @@ def menu():
     while run:
 
         if pygame.mixer.music.get_busy() is False:
-            menuMusicPlayer()
+            MusicPlayer().menuMusic()
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -142,7 +115,7 @@ def menu():
 
 def game(player: Ship):
 
-    gameMusicPlayer()
+    MusicPlayer().gameMusic()
 
     pygame.mixer.music.stop()
     clock = pygame.time.Clock()
@@ -164,7 +137,7 @@ def game(player: Ship):
 
     def game_over():
         lostFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 120)
-        gameOverPlayer()
+        MusicPlayer().gameOver()
         lost_label = lostFont.render(f"GAME OVER...", True, "#FFFFFF")
         WIN.blit(lost_label, (200, 300))
         pygame.display.update()
@@ -201,7 +174,7 @@ def game(player: Ship):
 
     while run:
         if pygame.mixer.music.get_busy() is False:  # MUSIC PLAYER
-            gameMusicPlayer()
+            MusicPlayer().gameMusic()
 
         clock.tick(FPS)
         redraw_game_window()
@@ -229,7 +202,7 @@ def game(player: Ship):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                menuMusicPlayer()
+                MusicPlayer().menuMusic()
                 run = False
 
         keys = pygame.key.get_pressed()
