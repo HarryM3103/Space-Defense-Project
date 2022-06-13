@@ -211,13 +211,13 @@ class Game:
                     run = False
 
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_a] and player.x - player.vel > 0:
+            if keys[pygame.K_a] and player.checkBorder_LEFT() is True:
                 player.move_left()
-            if keys[pygame.K_d] and player.x + player.vel + player.get_width() < WIDTH:
+            if keys[pygame.K_d] and player.checkBorder_RIGHT() is True:
                 player.move_right()
-            if keys[pygame.K_w] and player.y - player.vel > 0:
+            if keys[pygame.K_w] and player.checkBorder_UP() is True:
                 player.move_up()
-            if keys[pygame.K_s] and player.y + player.vel + player.get_width() < HEIGHT:
+            if keys[pygame.K_s] and player.checkBorder_DOWN() is True:
                 player.move_down()
             if keys[pygame.K_SPACE]:
                 player.shoot(WIN)

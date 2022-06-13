@@ -9,7 +9,7 @@ class FighterShip(Ship):
     VEL = 8
     WIDTH = 45
     HEIGHT = 45
-    GAME_HEIGHT = 700
+    GAME_HEIGHT, GAME_WIDTH = 700, 1000
 
     def __init__(self, x: int, y: int, health=75):
         super().__init__(x, y, health)
@@ -44,5 +44,25 @@ class FighterShip(Ship):
 
     def move_left(self):
         self.x -= self.VEL
+
+    def checkBorder_LEFT(self) -> bool:
+        if self.x - self.vel > 0:
+            return True
+        return False
+
+    def checkBorder_RIGHT(self) -> bool:
+        if self.x + self.vel + self.get_width() < self.GAME_WIDTH:
+            return True
+        return False
+
+    def checkBorder_UP(self) -> bool:
+        if self.y - self.vel > 0:
+            return True
+        return False
+
+    def checkBorder_DOWN(self) -> bool:
+        if self.y + self.vel + self.get_width() < self.GAME_HEIGHT:
+            return True
+        return False
 
     # TODO include more code for lasers, etc
