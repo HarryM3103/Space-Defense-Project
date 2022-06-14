@@ -141,29 +141,6 @@ class Game:
         farthests_spawn_distance = -1800
         number_of_healthpots = 4
 
-        def addToLeaderBoard():
-
-            scoreboard = ScoreBoard("score.txt")
-            scoreFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 80)
-            wavesFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 75)
-
-            if level > scoreboard.high_score()[0]:
-                scoreboard.addItem(level)
-                new_highScore = scoreFont.render(
-                    f"NEW HIGHSCORE", True, "#FFFFFF")
-                score = wavesFont.render(
-                    f"WAVES SURVIVED: {level}", True, "#FFFFFF")
-                WIN.blit(new_highScore, (230, 405))
-                WIN.blit(score, (200, 475))
-                pygame.display.update()
-
-            else:
-                scoreboard.addItem(level)
-                score = wavesFont.render(
-                    f"WAVES SURVIVED: {level}", True, "#FFFFFF")
-                WIN.blit(score, (180, 420))
-                pygame.display.update()
-
         def game_over():
 
             lostFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 140)
@@ -173,6 +150,29 @@ class Game:
             WIN.blit(lost_label, (160, 300))
 
             scoreboard = ScoreBoard("score.txt")
+
+            def addToLeaderBoard():
+
+                scoreboard = ScoreBoard("score.txt")
+                scoreFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 80)
+                wavesFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 75)
+
+                if level > scoreboard.high_score()[0]:
+                    scoreboard.addItem(level)
+                    new_highScore = scoreFont.render(
+                        f"NEW HIGHSCORE", True, "#FFFFFF")
+                    score = wavesFont.render(
+                        f"WAVES SURVIVED: {level}", True, "#FFFFFF")
+                    WIN.blit(new_highScore, (230, 405))
+                    WIN.blit(score, (200, 475))
+                    pygame.display.update()
+
+                else:
+                    scoreboard.addItem(level)
+                    score = wavesFont.render(
+                        f"WAVES SURVIVED: {level}", True, "#FFFFFF")
+                    WIN.blit(score, (180, 420))
+                    pygame.display.update()
 
             if len(scoreboard.high_score()) != 0:
                 addToLeaderBoard()
