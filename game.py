@@ -2,7 +2,7 @@ import pygame
 import os
 import random
 
-from store.enemies.Enemy import Enemy
+from store.enemies.enemy import Enemy
 from store.ships.Ship import Ship
 from store.players.PlayerAssault import PlayerAssault
 from store.players.PlayerFighter import PlayerFighter
@@ -10,9 +10,9 @@ from store.players.PlayerHeavy import PlayerHeavy
 from store.button.Button import Button
 from store.lasers.Laser import Laser, collide
 from store.power_ups.HealthPotion import HealthPotion
-from store.power_ups.DestroyEnemies import DestroyEnemies
 from store.musicPlayer.music import MusicPlayer
 from store.scoreboard.score_storer import ScoreBoard
+from store.enemies.boss import Boss
 pygame.mixer.init()
 
 
@@ -132,7 +132,6 @@ class Game:
         MaxHealth = player.maxHealth
         enemies: list[Enemy] = []
         health_potions: list[HealthPotion] = []
-        destroy_powerUp: list[DestroyEnemies] = []
         lost = False
         lost_count = 0
         wave_length = 4
@@ -251,6 +250,7 @@ class Game:
                     MusicPlayer().menuMusic()
                     run = False
 
+            # MOVEMENT
             keys = pygame.key.get_pressed()
             if keys[pygame.K_a] and player.checkBorder_LEFT() is True:
                 player.move_left()

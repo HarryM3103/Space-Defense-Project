@@ -18,6 +18,3 @@ class ScoreBoard:
                 text = text.rstrip('\r\n')
                 contentsList.append(int(text))
         return (sorted(contentsList))[::-1]
-
-
-print(ScoreBoard("score.txt").high_score())
