@@ -22,6 +22,7 @@ class Boss(Ship):
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.lasers = []
         self.cool_down_counter = 0
+        self.maxHealth = 1250
 
     def shoot(self, window):
         if self.cool_down_counter == 0:
