@@ -13,6 +13,7 @@ from store.power_ups.HealthPotion import HealthPotion
 from store.musicPlayer.music import MusicPlayer
 from store.scoreboard.score_storer import ScoreBoard
 from store.enemies.boss import Boss
+from store.healthbar.healthbar import HealthBar
 pygame.mixer.init()
 
 
@@ -102,11 +103,14 @@ class Menu:
                     run = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if ATTACK_SHIP_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        Game().game(PlayerAssault(START_X, START_Y))
+                        Game(level=0, wave_length=4).game(
+                            PlayerAssault(START_X, START_Y))
                     if FIGHTER_SHIP_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        Game().game(PlayerFighter(START_X, START_Y))
+                        Game(level=23, wave_length=4).game(
+                            PlayerFighter(START_X, START_Y))
                     if HEAVY_SHIP_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        Game().game(PlayerHeavy(START_X, START_Y-100))
+                        Game(level=0, wave_length=4).game(
+                            PlayerHeavy(START_X, START_Y-100))
 
             for enemy in enemies:
                 enemy.move_down(enemy_vel)
@@ -119,6 +123,11 @@ class Menu:
 
 class Game:
 
+    def __init__(self, level: int, wave_length: int) -> None:
+        self.level = level
+        self.wave_length = wave_length
+        self.current_level = 0
+
     def game(self, player: Ship):
 
         MusicPlayer().gameMusic()
@@ -126,19 +135,12 @@ class Game:
         pygame.mixer.music.stop()
         clock = pygame.time.Clock()
         run = True
-
-        level = 0
         lives = 5
-        MaxHealth = player.maxHealth
         enemies: list[Enemy] = []
         health_potions: list[HealthPotion] = []
-        lost = False
-        lost_count = 0
-        wave_length = 4
         enemy_vel = 1
         laser_vel = 5
         farthests_spawn_distance = -1800
-        number_of_healthpots = 4
 
         def game_over():
 
@@ -156,20 +158,20 @@ class Game:
                 scoreFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 80)
                 wavesFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 75)
 
-                if level > scoreboard.high_score()[0]:
-                    scoreboard.addItem(level)
+                if self.level > scoreboard.high_score()[0]:
+                    scoreboard.addItem(self.level)
                     new_highScore = scoreFont.render(
                         f"NEW HIGHSCORE", True, "#FFFFFF")
                     score = wavesFont.render(
-                        f"WAVES SURVIVED: {level}", True, "#FFFFFF")
+                        f"WAVES SURVIVED: {self.level}", True, "#FFFFFF")
                     WIN.blit(new_highScore, (230, 405))
                     WIN.blit(score, (200, 475))
                     pygame.display.update()
 
                 else:
-                    scoreboard.addItem(level)
+                    scoreboard.addItem(self.level)
                     score = wavesFont.render(
-                        f"WAVES SURVIVED: {level}", True, "#FFFFFF")
+                        f"WAVES SURVIVED: {self.level}", True, "#FFFFFF")
                     WIN.blit(score, (180, 420))
                     pygame.display.update()
 
@@ -177,9 +179,9 @@ class Game:
                 addToLeaderBoard()
 
             else:
-                scoreboard.addItem(level)
+                scoreboard.addItem(self.level)
                 score = wavesFont.render(
-                    f"WAVES SURVIVED: {level}", True, "#FFFFFF")
+                    f"WAVES SURVIVED: {self.level}", True, "#FFFFFF")
                 WIN.blit(score, (180, 420))
                 pygame.display.update()
 
@@ -192,10 +194,21 @@ class Game:
             WIN.blit(GAME_BG, (0, 0))
 
             myFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 50)
-            currentLevel = myFont.render(f"Level: {level}", True, "#FFFFFF")
+            currentLevel = myFont.render(
+                f"Level: {self.level}", True, "#FFFFFF")
             playerHealth = myFont.render(
                 f"Health: {player.health}", True, "#FFFFFF")
             playerLives = myFont.render(f"Lives: {lives}", True, "#FFFFFF")
+
+            # GREY = (49, 49, 49)
+            # YELLOW = (255, 197, 0)
+            # BLUE = (0, 162, 255)
+
+            # boss = Boss(100, 100)
+            # healthBar = HealthBar(75, 660, boss, BLUE, GREY, YELLOW)
+            # healthBar.draw_shieldBar(WIN)
+            # healthBar.draw_healthBar(WIN)
+            # boss.draw(WIN)
 
             for enemy in enemies:
                 enemy.draw(WIN)
@@ -210,10 +223,6 @@ class Game:
             WIN.blit(currentLevel, (25, 50))
             WIN.blit(playerHealth, (750, 50))
             WIN.blit(playerLives, (750, 90))
-
-            if lost:
-                lost_label = lostFont.render(f"GAME OVER...", True, "#FFFFFF")
-                WIN.blit(lost_label, (200, 300))
 
             pygame.display.update()
 
@@ -235,12 +244,12 @@ class Game:
                     health_potions.append(HealthPot)
 
             if len(enemies) == 0:
-                level += 1
-                wave_length += 2
+                self.level += 1
+                self.wave_length += 2
                 farthests_spawn_distance -= 45
                 if player.health != player.maxHealth:
                     player.health += 25
-                for i in range(wave_length):
+                for i in range(self.wave_length):
                     enemy = Enemy(random.randrange(50, WIDTH-70),
                                   random.randrange(farthests_spawn_distance, -100), random.choice(["blue", "red", "grey"]))
                     enemies.append(enemy)
@@ -291,7 +300,77 @@ class Game:
 
             player.move_lasers(-laser_vel, enemies)
 
+        # TODO complete the check sequence
+        # if self.level == self.current_level + 25:
+        #     for enemy in enemies[:]:
+        #          enemies.remove(enemy)
+        #     self.current_level = self.level
+        #     BossFight(self).game(player)
+
         pygame.display.update()
+
+
+class BossFight:  # TODO complete the BossFight class
+
+    def __init__(self, game: Game) -> None:
+        self.current_game = game
+
+    def game(self, player: Ship):
+        MusicPlayer().gameMusic()
+
+        pygame.mixer.music.stop()
+        clock = pygame.time.Clock()
+        run = True
+        lives = 5
+        health_potions: list[HealthPotion] = []
+        enemy_vel = 1
+        laser_vel = 5
+
+        def game_over():
+
+            lostFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 140)
+            wavesFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 75)
+            MusicPlayer().gameOver()
+            lost_label = lostFont.render(f"GAME OVER", True, "#FFFFFF")
+            WIN.blit(lost_label, (160, 300))
+
+            scoreboard = ScoreBoard("score.txt")
+
+            def addToLeaderBoard():
+
+                scoreboard = ScoreBoard("score.txt")
+                scoreFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 80)
+                wavesFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 75)
+
+                if self.level > scoreboard.high_score()[0]:
+                    scoreboard.addItem(self.level)
+                    new_highScore = scoreFont.render(
+                        f"NEW HIGHSCORE", True, "#FFFFFF")
+                    score = wavesFont.render(
+                        f"WAVES SURVIVED: {self.level}", True, "#FFFFFF")
+                    WIN.blit(new_highScore, (230, 405))
+                    WIN.blit(score, (200, 475))
+                    pygame.display.update()
+
+                else:
+                    scoreboard.addItem(self.level)
+                    score = wavesFont.render(
+                        f"WAVES SURVIVED: {self.level}", True, "#FFFFFF")
+                    WIN.blit(score, (180, 420))
+                    pygame.display.update()
+
+            if len(scoreboard.high_score()) != 0:
+                addToLeaderBoard()
+
+            else:
+                scoreboard.addItem(self.level)
+                score = wavesFont.render(
+                    f"WAVES SURVIVED: {self.level}", True, "#FFFFFF")
+                WIN.blit(score, (180, 420))
+                pygame.display.update()
+
+            pygame.display.update()
+            pygame.time.delay(10000)
 
 
 Menu().menu()

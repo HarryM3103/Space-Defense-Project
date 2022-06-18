@@ -15,14 +15,16 @@ RED_LASER = pygame.transform.rotate(RD, 90.0)
 
 class Boss(Ship):
 
-    def __init__(self, x: int, y: int, health=1250):
+    def __init__(self, x: int, y: int, health=850, shield=850):
         super().__init__(x, y, health)
         self.ship_img = BOSS_IMG
         self.laser_img = RED_LASER
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.lasers = []
         self.cool_down_counter = 0
-        self.maxHealth = 1250
+        self.shield = shield
+        self.maxShieldHP = 875
+        self.maxHealth = 850
 
     def shoot(self, window):
         if self.cool_down_counter == 0:
