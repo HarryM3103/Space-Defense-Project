@@ -18,6 +18,7 @@ class Ship():
         self.vel = None
         self.lasers = []
         self.cool_down_counter = 0
+        self.damage = 25
 
     def draw(self, window):
         window.blit(self.ship_img, (self.x, self.y))

@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import time
 
 from store.enemies.enemy import Enemy
 from store.ships.Ship import Ship
@@ -31,6 +32,9 @@ MENU_BG = pygame.transform.scale(pygame.image.load(
     os.path.join("assets", "images", "galaxy_bg.jpeg")), (WIDTH, HEIGHT))
 
 GAME_BG = pygame.transform.scale(
+    pygame.image.load(os.path.join("assets", "images", "space.jpeg")), (WIDTH, HEIGHT))
+
+BOSS_BG = pygame.transform.scale(
     pygame.image.load(os.path.join("assets", "images", "space.jpeg")), (WIDTH, HEIGHT))
 
 
@@ -106,10 +110,10 @@ class Menu:
                         Game(level=0, wave_length=4).game(
                             PlayerAssault(START_X, START_Y))
                     if FIGHTER_SHIP_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        Game(level=23, wave_length=4).game(
+                        Game(level=24, wave_length=4).game(
                             PlayerFighter(START_X, START_Y))
                     if HEAVY_SHIP_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        Game(level=0, wave_length=4).game(
+                        Game(level=24, wave_length=4).game(
                             PlayerHeavy(START_X, START_Y-100))
 
             for enemy in enemies:
@@ -227,6 +231,7 @@ class Game:
             pygame.display.update()
 
         while run:
+
             if pygame.mixer.music.get_busy() is False:  # MUSIC PLAYER
                 MusicPlayer().gameMusic()
 
@@ -301,19 +306,18 @@ class Game:
             player.move_lasers(-laser_vel, enemies)
 
         # TODO complete the check sequence
-        # if self.level == self.current_level + 25:
-        #     for enemy in enemies[:]:
-        #          enemies.remove(enemy)
-        #     self.current_level = self.level
-        #     BossFight(self).game(player)
+            if self.level == self.current_level + 25:
+                BossFight(player, self).game(player)
 
         pygame.display.update()
 
 
 class BossFight:  # TODO complete the BossFight class
 
-    def __init__(self, game: Game) -> None:
+    def __init__(self, player: Ship, game: Game) -> None:
         self.current_game = game
+        self.player = player
+        self.current_level = game.level
 
     def game(self, player: Ship):
         MusicPlayer().gameMusic()
@@ -322,8 +326,9 @@ class BossFight:  # TODO complete the BossFight class
         clock = pygame.time.Clock()
         run = True
         lives = 5
+        boss_list: list[Boss] = [Boss(25, -500)]
         health_potions: list[HealthPotion] = []
-        enemy_vel = 1
+        boss_vel = 0.5
         laser_vel = 5
 
         def game_over():
@@ -371,6 +376,109 @@ class BossFight:  # TODO complete the BossFight class
 
             pygame.display.update()
             pygame.time.delay(10000)
+
+        def redraw_game_window():
+            pygame.display.set_caption("Space Defense")
+
+            WIN.blit(BOSS_BG, (0, 0))
+
+            myFont = pygame.font.Font("assets/fonts/ARCADE.ttf", 50)
+            currentLevel = myFont.render(
+                f"Level: {self.current_level}", True, "#FFFFFF")
+            playerHealth = myFont.render(
+                f"Health: {self.player.health}", True, "#FFFFFF")
+            playerLives = myFont.render(
+                f"Lives: {lives}", True, "#FFFFFF")
+
+            for boss in boss_list:
+                GREY = (49, 49, 49)
+                YELLOW = (255, 197, 0)
+                BLUE = (0, 162, 255)
+                healthBar = HealthBar(75, 660, boss, BLUE, GREY, YELLOW)
+                healthBar.draw_shieldBar(WIN)
+                healthBar.draw_healthBar(WIN)
+                boss.draw(WIN)
+
+            for healthPot in health_potions:
+                healthPot.draw(WIN)
+
+            player.draw(WIN)
+
+            WIN.blit(currentLevel, (25, 50))
+            WIN.blit(playerHealth, (750, 50))
+            WIN.blit(playerLives, (750, 90))
+
+            pygame.display.update()
+
+        while run:
+
+            if pygame.mixer.music.get_busy() is False:  # MUSIC PLAYER
+                MusicPlayer().gameMusic()
+
+            clock.tick(FPS)
+            redraw_game_window()
+
+            if lives <= 0 or player.health <= 0:
+                game_over()
+                Menu().menu()
+
+            if len(health_potions) == 0:
+                if random.randrange(0, 5*60) == 1:
+                    HealthPot = HealthPotion(random.randrange(50, WIDTH-70),
+                                             random.randrange(-1800, -100))
+                    health_potions.append(HealthPot)
+
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_a] and player.checkBorder_LEFT() is True:
+                player.move_left()
+            if keys[pygame.K_d] and player.checkBorder_RIGHT() is True:
+                player.move_right()
+            if keys[pygame.K_w] and player.checkBorder_UP() is True:
+                player.move_up()
+            if keys[pygame.K_s] and player.checkBorder_DOWN() is True:
+                player.move_down()
+            if keys[pygame.K_SPACE]:
+                player.shoot(WIN)
+
+            for healthPot in health_potions[:]:
+                healthPot.move_down(2)
+
+                if collide(healthPot, player):
+                    health_potions.remove(healthPot)
+                    if player.health != player.maxHealth:
+                        player.health += 25
+
+                if healthPot.y + healthPot.get_height() > HEIGHT + 50:
+                    health_potions.remove(healthPot)
+
+            for boss in boss_list:
+                if boss.y != -60:
+                    player.damage = 0
+                    boss.move_down()
+                else:
+                    player.damage = 12.5
+                    boss.move_side_to_side()
+
+                if boss.health == boss.currentHealth - 250:
+                    player.damage = 0
+                    boss.shield_regen()
+
+                boss.move_lasers(-laser_vel, player)
+
+                if random.randrange(0, 2*60) == 1:
+                    i = random.randint(1, 4)
+                    boss.rand_shoot(WIN, i)
+
+            # TODO ADD BOSS SHOOTING MECHANICS
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    MusicPlayer().menuMusic()
+                    run = False
+
+            player.move_lasers_boss(-laser_vel, boss_list)
+
+        Menu().menu()
 
 
 Menu().menu()

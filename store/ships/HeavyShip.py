@@ -1,3 +1,4 @@
+from store.enemies.boss import Boss
 from store.ships.Ship import Ship
 import pygame
 import os
@@ -21,16 +22,32 @@ class HeavyShip(Ship):
             if laser.off_screen(self.GAME_HEIGHT):
                 if laser in self.lasers:
                     self.lasers.remove(laser)
-                else:
-                    print("Okay!")
             else:
                 for obj in objs:
                     if laser.collision(obj):
                         if laser in self.lasers:
                             objs.remove(obj)
                             self.lasers.remove(laser)
-                        else:
-                            print("Okay!")
+
+    def move_lasers_boss(self, vel, objs: list[Boss]):
+        self.cooldown()
+        for laser in self.lasers:
+            laser.move(vel)
+            if laser.off_screen(self.GAME_HEIGHT):
+                if laser in self.lasers:
+                    self.lasers.remove(laser)
+            else:
+                for obj in objs:
+                    if laser.collision(obj):
+                        if laser in self.lasers:
+                            if obj.shield != 0:
+                                obj.shield -= self.damage
+                                self.lasers.remove(laser)
+                            else:
+                                obj.health -= self.damage
+                                self.lasers.remove(laser)
+                            if obj.health == 0:
+                                objs.remove(obj)
 
     def move_up(self):
         self.y -= self.VEL
