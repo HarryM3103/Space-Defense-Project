@@ -463,9 +463,9 @@ class BossFight:  # TODO complete the BossFight class
                     player.damage = 0
                     boss.shield_regen()
 
-                boss.move_lasers(-laser_vel, player)
-
-                if random.randrange(0, 2*60) == 1:
+            for boss in boss_list:
+                boss.move_lasers(laser_vel, player)
+                if random.randrange(0, 60) == 1:
                     i = random.randint(1, 4)
                     boss.rand_shoot(WIN, i)
 
