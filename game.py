@@ -1,7 +1,6 @@
 import pygame
 import os
 import random
-import time
 
 from store.enemies.enemy import Enemy
 from store.ships.Ship import Ship
@@ -232,7 +231,7 @@ class Game:
 
         while run:
 
-            if pygame.mixer.music.get_busy() is False:  # MUSIC PLAYER
+            if pygame.mixer.music.get_busy() is False:
                 MusicPlayer().gameMusic()
 
             clock.tick(FPS)
@@ -389,6 +388,7 @@ class BossFight:  # TODO complete the BossFight class
                 f"Health: {self.player.health}", True, "#FFFFFF")
             playerLives = myFont.render(
                 f"Lives: {lives}", True, "#FFFFFF")
+            bossName = myFont.render(f"ROE V WADEdda", True, "#FFFFFF")
 
             for boss in boss_list:
                 GREY = (49, 49, 49)
@@ -407,13 +407,14 @@ class BossFight:  # TODO complete the BossFight class
             WIN.blit(currentLevel, (25, 50))
             WIN.blit(playerHealth, (750, 50))
             WIN.blit(playerLives, (750, 90))
+            WIN.blit(bossName, (500, 200))
 
             pygame.display.update()
 
         while run:
 
             if pygame.mixer.music.get_busy() is False:  # MUSIC PLAYER
-                MusicPlayer().gameMusic()
+                MusicPlayer().bossMusic()
 
             clock.tick(FPS)
             redraw_game_window()
@@ -456,7 +457,7 @@ class BossFight:  # TODO complete the BossFight class
                     player.damage = 0
                     boss.move_down()
                 else:
-                    player.damage = 12.5
+                    player.damage = 6.25
                     boss.move_side_to_side()
 
                 if boss.health == boss.currentHealth - 250:
@@ -465,11 +466,11 @@ class BossFight:  # TODO complete the BossFight class
 
             for boss in boss_list:
                 boss.move_lasers(laser_vel, player)
-                if random.randrange(0, 60) == 1:
+                if random.randrange(0, 45) == 1:
                     i = random.randint(1, 4)
                     boss.rand_shoot(WIN, i)
 
-            # TODO ADD BOSS SHOOTING MECHANICS
+            # TODO MAKE A SUPER SHOT FOR THE BOSS
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
