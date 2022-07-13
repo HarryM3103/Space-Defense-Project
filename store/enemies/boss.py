@@ -10,7 +10,12 @@ BOSS_IMG = pygame.transform.scale(pygame.image.load(
 
 RD = pygame.transform.scale(pygame.image.load(os.path.join(
     "assets", "images", "red laser.png")), (60, 60))
+
+YL = pygame.transform.scale(pygame.image.load(os.path.join(
+    "assets", "images", "yellow_laser.png")), (60, 60))
 RED_LASER = pygame.transform.rotate(RD, 90.0)
+
+YELLOW_LASER = pygame.transform.rotate(RD, 90.0)
 
 
 class Boss(Ship):
@@ -22,6 +27,8 @@ class Boss(Ship):
         super().__init__(x, y, health)
         self.ship_img = BOSS_IMG
         self.laser_img = RED_LASER
+        self.super_laser_img = YELLOW_LASER
+        self.super_lasers = []
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.shield = shield
         self.maxShieldHP = 850
@@ -33,31 +40,27 @@ class Boss(Ship):
 
     def shoot_1(self, window):
         if self.cool_down_counter == 0:
-            laser_1 = Laser(self.x+100, self.y+275, self.laser_img)
+            laser_1 = Laser(self.x+100, self.y+300, self.laser_img)
             self.lasers.append(laser_1)
             self.cool_down_counter = 1
-            print("Shoot 1")
 
     def shoot_2(self, window):
         if self.cool_down_counter == 0:
-            laser_2 = Laser(self.x+225, self.y+275, self.laser_img)
+            laser_2 = Laser(self.x+225, self.y+300, self.laser_img)
             self.lasers.append(laser_2)
             self.cool_down_counter = 1
-            print("Shoot 2")
 
     def shoot_3(self, window):
         if self.cool_down_counter == 0:
-            laser_3 = Laser(self.x+490, self.y+275, self.laser_img)
+            laser_3 = Laser(self.x+490, self.y+300, self.laser_img)
             self.lasers.append(laser_3)
             self.cool_down_counter = 1
-            print("Shoot 3")
 
     def shoot_4(self, window):
         if self.cool_down_counter == 0:
-            laser_4 = Laser(self.x+600, self.y+275, self.laser_img)
+            laser_4 = Laser(self.x+600, self.y+300, self.laser_img)
             self.lasers.append(laser_4)
             self.cool_down_counter = 1
-            print("Shoot 4")
 
     def rand_shoot(self, window, num):
         if num == 1:

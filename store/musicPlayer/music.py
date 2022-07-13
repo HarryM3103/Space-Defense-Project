@@ -7,6 +7,9 @@ MUSIC_PATHS_MENU = ["assets/music/8-bit-adventure.mp3",
 MUSIC_PATHS_GAME = ["assets/music/Shapes.mp3",
                     "assets/music/Unfound.mp3", "assets/music/Low Earth Orbit.mp3", "assets/music/Aurora Borealis.mp3", "assets/music/Liminal.mp3"]
 
+MUSIC_PATHS_BOSS = ["assets/music/Chiptune Boss Fight.mp3",
+                    "assets/music/The Final Battle.mp3"]
+
 
 class MusicPlayer():
 
@@ -27,3 +30,9 @@ class MusicPlayer():
         pygame.mixer.music.load(song)
         pygame.mixer.music.play(0)
         pygame.mixer.music.set_volume(0.25)
+
+    def bossMusic(self):
+        song = random.choice(MUSIC_PATHS_BOSS)
+        pygame.mixer.music.load(song)
+        pygame.mixer.music.play(0)
+        pygame.mixer.music.set_volume(0.15)
